@@ -6,7 +6,7 @@ const todoPage = new todo_page();
 
 const URL = Cypress.env("baseUrl");
 
-describe("Hurdlr Todo App Testing Suite", () => {
+describe("Todo App Testing Suite", () => {
   beforeEach(() => {
     cy.visit(URL);
     cy.clearLocalStorage();
@@ -15,15 +15,15 @@ describe("Hurdlr Todo App Testing Suite", () => {
   });
 
   afterEach(() => {
-    // todoPage.deleteAllTasks();
+    todoPage.deleteAllTasks();
   });
 
-  it.only("add a task", () => {
+  it("add a task", () => {
     todoPage.addTask("[add a task] test case");
   });
 
   it("add multiple tasks", () => {
-    for (let i = 0; i < 10; ++i) {
+    for (let i = 0; i < 6; ++i) {
       todoPage.addTask("Task " + i);
     }
   });
@@ -36,29 +36,30 @@ describe("Hurdlr Todo App Testing Suite", () => {
   });
 
   it("validate the user is unable to add an empty task", () => {
-    cy.get(".App-body").children().should("not.have.length", 0); // validates there are tasks to delete
-    todoPage.addTask(""); // passes in an empty string to represent an empty task
+    cy.getByTestId("add-todo-button").click(); // passes in an empty string to represent an empty task
+    // checks that an alert pops up for trying to add a todo with no text
+    cy.on("window:alert", (text) => {
+      expect(text).to.contains("Please fill in your todo");
+    });
     todoPage.addTask("                   "); // passes in a string of spaces which should not yield a new task
-    // TODO add validation that a new task has not been created
+    // checks that an alert pops up for trying to add a todo with no only spaces
+    cy.on("window:alert", (text) => {
+      expect(text).to.contains("Please fill in your todo");
+    });
   });
 
-  it("validate that if there are 15+ tasks, the user may scroll through the tasks to successfully view all of the tasks", () => {
-    for (let i = 0; i < 15; ++i) {
+  it.only("validate that if there are 15+ tasks, the user may scroll through the tasks to successfully view all of the tasks", () => {
+    for (let i = 0; i < 9; ++i) {
       todoPage.addTask("Adding Task " + i);
     }
-    cy.get(".App-body").should("have.css", "overflow-y", "scroll"); // validates that the scroll bar is present
-  });
-
-  it("edit a task", () => {
-    todoPage.addTask("Task to be Edited");
-    todoPage.editTask(" EDITED", 0);
-    // TODO edit a task where the text is cleared first
+    cy.getByTestId("app-body").should("have.css", "overflow-y", "scroll"); // validates that the scroll bar is present
   });
 
   it("delete a task", () => {
     const taskText = "Task to be Deleted";
     todoPage.addTask(taskText);
     todoPage.deleteTask(taskText);
+    // todoPage.deleteTask(taskText);
   });
 
   it("delete all tasks", () => {

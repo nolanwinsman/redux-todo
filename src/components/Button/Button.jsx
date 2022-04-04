@@ -3,7 +3,11 @@ import classes from "./Button.module.css";
 
 const Button = ({ text, type }) => {
   return (
-    <button className={classes.button} type={type}>
+    <button
+      data-testid="add-todo-button"
+      className={classes.button}
+      type={type}
+    >
       {text}
     </button>
   );

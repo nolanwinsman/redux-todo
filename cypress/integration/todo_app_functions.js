@@ -13,8 +13,10 @@ class todo_page {
    * @author Nolan Winsman
    */
   addTask(taskText) {
-    cy.wait(500); // TODO find a way to do this without a delay
-    cy.get(".textInput").type(taskText + "{enter}");
+    cy.wait(200); // TODO find a way to do this without a delay
+    cy.getByTestId("todo-input").type(taskText);
+    cy.getByTestId("add-todo-button").click();
+    // cy.scrollTo("top"); // Scroll 'sidebar' to its bottom
   }
 
   /**
@@ -23,11 +25,11 @@ class todo_page {
    * @author Nolan Winsman
    */
   deleteTask() {
-    // TODO validate the X button/buttons exists then try to delete
-    cy.get(".rowButton")
-      .eq(0)
-      .should("not.have.attr", "disabled", "code-snippet")
-      .click();
+    cy.getByTestId("delete-todo-button").should(
+      "not.have.attr",
+      "disabled",
+      "code-snippet"
+    );
   }
   /**
    * Overloaded method for deleteTask()
@@ -37,8 +39,9 @@ class todo_page {
    * @author Nolan Winsman
    */
   deleteTask(taskText) {
-    cy.contains(".row", taskText).children().eq(1).click();
-    cy.get('[data-testid="deleteButton_"');
+    // deletes the first task
+    // TODO delete the task with String taskText
+    cy.getByTestId("delete-todo-button").eq(0).click();
   }
 
   /**
@@ -48,38 +51,18 @@ class todo_page {
    */
   deleteAllTasks() {
     // TODO not deleting the first two Tasks
-    cy.get(".App-body").children().should("not.have.length", 0); // validates there are tasks to delete
+    // cy.getByTestId("delete-todo-button").should("not.have.length", 0); // validates there are tasks to delete
 
-    cy.get(".rowButton")
+    cy.getByTestId("delete-todo-button")
       .should("not.have.attr", "disabled", "code-snippet")
       // .each goes through every task
-      .each(($btn, index) => {
+      .each(($btn) => {
         // if (index >= 1) {
         cy.wait(100);
         cy.wrap($btn).click();
         cy.wait(100); // delay avoids dom element errors, TODO make it check .App-system
         //}
       });
-  }
-
-  /**
-   * Edits a desired task with the new text of newTaskText
-   *
-   * @param {string} newTaskText The task will be edited to contain this text
-   * @param {number} index This value represents which task is going to be edited. Defaults to a value of 0 for the first task.
-   * @author Nolan Winsman
-   */
-  editTask(newTaskText, index = 0) {
-    cy.get(".row")
-      .eq(index)
-      .children()
-      .first()
-      .type(newTaskText + "{enter}"); // TODO should clear text first then add new text
-    cy.get(".rowButton")
-      .eq(index)
-      .should("not.have.attr", "disabled", "code-snippet")
-      .contains("DONE")
-      .click();
   }
 }
 
