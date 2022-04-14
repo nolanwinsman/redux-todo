@@ -48,13 +48,6 @@ describe("Todo App Testing Suite", () => {
     });
   });
 
-  it.only("validate that if there are 15+ tasks, the user may scroll through the tasks to successfully view all of the tasks", () => {
-    for (let i = 0; i < 9; ++i) {
-      todoPage.addTask("Adding Task " + i);
-    }
-    cy.getByTestId("app-body").should("have.css", "overflow-y", "scroll"); // validates that the scroll bar is present
-  });
-
   it("delete a task", () => {
     const taskText = "Task to be Deleted";
     todoPage.addTask(taskText);
@@ -68,5 +61,12 @@ describe("Todo App Testing Suite", () => {
     }
     todoPage.deleteAllTasks();
     cy.get(".row").should("not.exist");
+  });
+
+  it("validate that if there are 15+ tasks, the user may scroll through the tasks to successfully view all of the tasks", () => {
+    for (let i = 0; i < 6; ++i) {
+      todoPage.addTask("Adding Task " + i);
+    }
+    cy.getByTestId("app-body").should("have.css", "overflow-y", "scroll"); // validates that the scroll bar is present
   });
 });
